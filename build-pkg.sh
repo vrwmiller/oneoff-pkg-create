@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 usage ()
 {
@@ -18,17 +18,19 @@ export DIR_SIZE
 {
 	. ${manifest_template}
 	# Add files in
-	echo "files:"
+	echo "files: {"
 	find ${files_dir} -type f -exec sha256 -r {} + |
-		awk '{print "    /" $2 ": " $1}'
+		awk '{print "    " $2 ": " $1}'
 	# Add symlinks in
 	find ${files_dir} -type l |
 		awk "{print \"    /\" \$1 \": '-'\"}"
+        echo "}"
 
 	# Add files_directories in
-	echo "files_directories:"
+	echo "files_directories: {"
 	find ${files_dir} -type d -mindepth 1 |
 		awk '{print "    /" $1 ": y"}'
+        echo "}"
 
 } | sed -e "s:${files_dir}::" > +MANIFEST
 
